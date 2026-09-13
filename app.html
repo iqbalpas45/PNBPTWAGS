@@ -1306,17 +1306,17 @@
                                 </table>
                             </div>
 
-                            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #d1d5db;">
-                                <p style="font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 12px;">📝 Keterangan Perhitungan:</p>
-                                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: #4b5563; background-color: #f9fafb; padding: 12px; border-radius: 6px;">
-                                    ${split.countPnbpWNIKerja > 0 ? `<div>• TWAGS PNBP HK WNI ${split.countPnbpWNIKerja} ORG x ${formatNominal(split.tarifPnbpKerja)}</div>` : ''}
-                                    ${split.countPnbpWNILibur > 0 ? `<div>• TWAGS PNBP HL WNI ${split.countPnbpWNILibur} ORG x ${formatNominal(split.tarifPnbpLibur)}</div>` : ''}
-                                    ${split.countPnbpWNAKerja > 0 ? `<div>• TWAGS PNBP HK WNA ${split.countPnbpWNAKerja} ORG x ${formatNominal(split.tarifPnbpKerja)}</div>` : ''}
-                                    ${split.countPnbpWNALibur > 0 ? `<div>• TWAGS PNBP HL WNA ${split.countPnbpWNALibur} ORG x ${formatNominal(split.tarifPnbpLibur)}</div>` : ''}
-                                    ${split.countPtdidWNIKerja > 0 ? `<div>• TWAGS PT.DID HK WNI ${split.countPtdidWNIKerja} ORG x ${formatNominal(split.tarifPtdidKerja)}</div>` : ''}
-                                    ${split.countPtdidWNILibur > 0 ? `<div>• TWAGS PT.DID HL WNI ${split.countPtdidWNILibur} ORG x ${formatNominal(split.tarifPtdidLibur)}</div>` : ''}
-                                    ${split.countPtdidWNAKerja > 0 ? `<div>• TWAGS PT.DID HK WNA ${split.countPtdidWNAKerja} ORG x ${formatNominal(split.tarifPtdidKerja)}</div>` : ''}
-                                    ${split.countPtdidWNALibur > 0 ? `<div>• TWAGS PT.DID HL WNA ${split.countPtdidWNALibur} ORG x ${formatNominal(split.tarifPtdidLibur)}</div>` : ''}
+                            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #d1d5db; background: #f9fafb; padding: 12px; border-radius: 6px; margin-left: -12px; margin-right: -12px; padding-left: 12px; padding-right: 12px;">
+                                <p style="font-size: 12px; font-weight: 600; color: #374151; margin-top: 0; margin-bottom: 12px;">📝 Keterangan Perhitungan:</p>
+                                <div style="font-size: 12px; line-height: 1.6; color: #4b5563;">
+                                    ${split.countPnbpWNIKerja > 0 ? `<div>• TWAGS PNBP HK WNI ${split.countPnbpWNIKerja} ORG x ${formatNominal(split.tarifPnbpKerja)}</div>` : '<div style="color: #999;">• TWAGS PNBP HK WNI - (no data)</div>'}
+                                    ${split.countPnbpWNILibur > 0 ? `<div>• TWAGS PNBP HL WNI ${split.countPnbpWNILibur} ORG x ${formatNominal(split.tarifPnbpLibur)}</div>` : '<div style="color: #999;">• TWAGS PNBP HL WNI - (no data)</div>'}
+                                    ${split.countPnbpWNAKerja > 0 ? `<div>• TWAGS PNBP HK WNA ${split.countPnbpWNAKerja} ORG x ${formatNominal(split.tarifPnbpKerja)}</div>` : '<div style="color: #999;">• TWAGS PNBP HK WNA - (no data)</div>'}
+                                    ${split.countPnbpWNALibur > 0 ? `<div>• TWAGS PNBP HL WNA ${split.countPnbpWNALibur} ORG x ${formatNominal(split.tarifPnbpLibur)}</div>` : '<div style="color: #999;">• TWAGS PNBP HL WNA - (no data)</div>'}
+                                    ${split.countPtdidWNIKerja > 0 ? `<div>• TWAGS PT.DID HK WNI ${split.countPtdidWNIKerja} ORG x ${formatNominal(split.tarifPtdidKerja)}</div>` : '<div style="color: #999;">• TWAGS PT.DID HK WNI - (no data)</div>'}
+                                    ${split.countPtdidWNILibur > 0 ? `<div>• TWAGS PT.DID HL WNI ${split.countPtdidWNILibur} ORG x ${formatNominal(split.tarifPtdidLibur)}</div>` : '<div style="color: #999;">• TWAGS PT.DID HL WNI - (no data)</div>'}
+                                    ${split.countPtdidWNAKerja > 0 ? `<div>• TWAGS PT.DID HK WNA ${split.countPtdidWNAKerja} ORG x ${formatNominal(split.tarifPtdidKerja)}</div>` : '<div style="color: #999;">• TWAGS PT.DID HK WNA - (no data)</div>'}
+                                    ${split.countPtdidWNALibur > 0 ? `<div>• TWAGS PT.DID HL WNA ${split.countPtdidWNALibur} ORG x ${formatNominal(split.tarifPtdidLibur)}</div>` : '<div style="color: #999;">• TWAGS PT.DID HL WNA - (no data)</div>'}
                                     <div>• TWAGS Asuransi ${item.asuransiDesc} ${split.visitorsCount} ORG x 2.000</div>
                                 </div>
                             </div>
