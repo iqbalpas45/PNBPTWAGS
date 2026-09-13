@@ -6,6 +6,7 @@
     <title>Portal Rekapitulasi TWA GS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -430,6 +431,43 @@
             asingKerja: { harga: 125000, pnbp: 100000, ptdid: 23000, asuransi: 2000 },
             asingLibur: { harga: 125000, pnbp: 100000, ptdid: 23000, asuransi: 2000 }
         };
+
+        // ============================================
+        // SUPABASE CLIENT INITIALIZATION
+        // ============================================
+        const SUPABASE_URL = 'https://ydngshcjcrkjerwztibjo.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlkbmdzaGpjcmprZXJ3enRpYmpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkyNDgxNjMsImV4cCI6MjEwNDgyNDE2M30.nCkqru3ktp4_OkQBXh59iWDFS8SYL79tjoZsIl23v1o';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ============================================
+        // SUPABASE DATA FUNCTIONS
+        // ============================================
+        async function loadSupabaseData() {
+            try {
+                const { data, error } = await supabase.from('transaksiHarian').select('*');
+                if (error) throw error;
+                if (data && data.length > 0) {
+                    store.transaksiHarian = data;
+                    console.log('✅ Data loaded dari Supabase:', data.length, 'records');
+                    render();
+                }
+            } catch (err) {
+                console.error('Error loading Supabase data:', err);
+                // Fallback ke dummyTransaksi jika error
+                store.transaksiHarian = dummyTransaksi;
+            }
+        }
+
+        async function saveToSupabase(trans) {
+            try {
+                const { error } = await supabase.from('transaksiHarian').insert([trans]);
+                if (error) throw error;
+                return true;
+            } catch (err) {
+                console.error('Error saving to Supabase:', err);
+                return false;
+            }
+        }
 
         // ============================================
         // GAS API FUNCTIONS
@@ -1697,20 +1735,22 @@
                         asingCash, asingQris, asingVa
                     };
 
-                    // Simpan ke local store DULU
-                    store.transaksiHarian.push(trans);
-                    showToast('✅ Transaksi tersimpan (local)!');
+                    // Simpan ke Supabase
+                    const supabaseSuccess = await saveToSupabase(trans);
+                    if (supabaseSuccess) {
+                        store.transaksiHarian.push(trans);
+                        showToast('✅ Transaksi tersimpan ke Supabase!');
+                    } else {
+                        // Fallback: simpan ke local jika Supabase gagal
+                        store.transaksiHarian.push(trans);
+                        showToast('⚠️ Disimpan ke local (Supabase offline)');
+                    }
+
                     formTransaksi.reset();
                     document.getElementById('tarifDisplay').innerHTML = '<span class="text-gray-600">Pilih tanggal terlebih dahulu</span>';
                     document.getElementById('nusantaraTotalDisplay').textContent = '0';
                     document.getElementById('asingTotalDisplay').textContent = '0';
                     render();
-
-                    // POST ke GAS (opsional, untuk sync)
-                    const gasSuccess = await postToGAS('addTransaksi', trans);
-                    if (gasSuccess) {
-                        showToast('☁️ Sinkronisasi GAS berhasil!');
-                    }
                 });
             }
 
@@ -1874,10 +1914,13 @@
         }
 
         // Initialize on page load
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             checkLoginStatus();
+            // Load data dari Supabase saat login berhasil
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                await loadSupabaseData();
+            }
         });
     </script>
 </body>
 </html>
-
