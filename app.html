@@ -1239,6 +1239,22 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            <!-- Calculation Description/Catatan -->
+                            <div class="mt-4 pt-4 border-t border-gray-300 dark:border-gray-600">
+                                <p class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3">📝 Keterangan Perhitungan:</p>
+                                <div class="space-y-2 text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 p-3 rounded">
+                                    ${split.countPnbpWNIKerja > 0 ? `<div>• TWAGS PNBP HK WNI ${split.countPnbpWNIKerja} ORG x ${formatNominal(split.tarifPnbpKerja)}</div>` : ''}
+                                    ${split.countPnbpWNILibur > 0 ? `<div>• TWAGS PNBP HL WNI ${split.countPnbpWNILibur} ORG x ${formatNominal(split.tarifPnbpLibur)}</div>` : ''}
+                                    ${split.countPnbpWNAKerja > 0 ? `<div>• TWAGS PNBP HK WNA ${split.countPnbpWNAKerja} ORG x ${formatNominal(split.tarifPnbpKerja)}</div>` : ''}
+                                    ${split.countPnbpWNALibur > 0 ? `<div>• TWAGS PNBP HL WNA ${split.countPnbpWNALibur} ORG x ${formatNominal(split.tarifPnbpLibur)}</div>` : ''}
+                                    ${split.countPtdidWNIKerja > 0 ? `<div>• TWAGS PT.DID HK WNI ${split.countPtdidWNIKerja} ORG x ${formatNominal(split.tarifPtdidKerja)}</div>` : ''}
+                                    ${split.countPtdidWNILibur > 0 ? `<div>• TWAGS PT.DID HL WNI ${split.countPtdidWNILibur} ORG x ${formatNominal(split.tarifPtdidLibur)}</div>` : ''}
+                                    ${split.countPtdidWNAKerja > 0 ? `<div>• TWAGS PT.DID HK WNA ${split.countPtdidWNAKerja} ORG x ${formatNominal(split.tarifPtdidKerja)}</div>` : ''}
+                                    ${split.countPtdidWNALibur > 0 ? `<div>• TWAGS PT.DID HL WNA ${split.countPtdidWNALibur} ORG x ${formatNominal(split.tarifPtdidLibur)}</div>` : ''}
+                                    <div>• TWAGS Asuransi ${item.asuransiDesc} ${split.visitorsCount} ORG x 2.000</div>
+                                </div>
+                            </div>
                         </div>`;
                 }
             });
