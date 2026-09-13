@@ -1916,10 +1916,10 @@
         // Initialize on page load
         window.addEventListener('DOMContentLoaded', async () => {
             checkLoginStatus();
-            // Load data dari Supabase saat login berhasil
-            if (sessionStorage.getItem('isLoggedIn') === 'true') {
-                await loadSupabaseData();
-            }
+            // Fallback: use dummyTransaksi untuk sekarang (Supabase integration pending)
+            // if (sessionStorage.getItem('isLoggedIn') === 'true') {
+            //     await loadSupabaseData();
+            // }
         });
     </script>
 </body>
