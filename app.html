@@ -1893,6 +1893,8 @@
             setTimeout(() => {
                 document.getElementById('loginForm').reset();
                 checkLoginStatus();
+                render();
+                // Initialize data in background
                 initializeData();
             }, 500);
         }
@@ -1913,10 +1915,10 @@
         // Initialize on page load
         window.addEventListener('DOMContentLoaded', async () => {
             checkLoginStatus();
-            // Fallback: use dummyTransaksi untuk sekarang (Supabase integration pending)
-            // if (sessionStorage.getItem('isLoggedIn') === 'true') {
-            //     await loadSupabaseData();
-            // }
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                render();
+                initializeData();
+            }
         });
     </script>
 </body>
