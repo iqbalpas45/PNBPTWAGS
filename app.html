@@ -433,12 +433,11 @@
         };
 
         // ============================================
-        // SUPABASE CLIENT INITIALIZATION (DISABLED - v2)
+        // SUPABASE CLIENT INITIALIZATION
         // ============================================
-        // Supabase integration to be completed in v2
-        // const SUPABASE_URL = 'https://ydngshcjcrkjerwztibjo.supabase.co';
-        // const SUPABASE_ANON_KEY = '...';
-        // const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const SUPABASE_URL = 'https://ydngshcjcrkjerwztibjo.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlkbmdzaGpjcmprZXJ3enRpYmpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkyNDgxNjMsImV4cCI6MjEwNDgyNDE2M30.nCkqru3ktp4_OkQBXh59iWDFS8SYL79tjoZsIl23v1o';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ============================================
         // SUPABASE DATA FUNCTIONS
@@ -1893,7 +1892,8 @@
                 document.getElementById('loginForm').reset();
                 checkLoginStatus();
                 render();
-                // Initialize data in background
+                // Try load from Supabase, fallback to dummyTransaksi
+                loadSupabaseData();
                 initializeData();
             }, 500);
         }
@@ -1916,6 +1916,8 @@
             checkLoginStatus();
             if (sessionStorage.getItem('isLoggedIn') === 'true') {
                 render();
+                // Try Supabase first, fallback to dummyTransaksi
+                await loadSupabaseData();
                 initializeData();
             }
         });
