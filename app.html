@@ -1888,13 +1888,13 @@
             sessionStorage.setItem('username', username);
             showToast(`✅ Selamat datang, ${username}!`);
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 document.getElementById('loginForm').reset();
                 checkLoginStatus();
+                // Initialize data BEFORE render
+                await initializeData();
+                await loadSupabaseData();
                 render();
-                // Try load from Supabase, fallback to dummyTransaksi
-                loadSupabaseData();
-                initializeData();
             }, 500);
         }
 
