@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Rekapitulasi TWA GS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            color-scheme: light dark;
+        }
+
+        body {
+            background-color: #f8f7ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1a1a1a;
+                color: #e5e7eb;
+            }
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .sidebar {
+                background: linear-gradient(135deg, #4c51bf 0%, #5a3fa0 100%);
+            }
+        }
+
+        .card-shadow {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-item {
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-left: 3px solid white;
+        }
+
+        .sidebar.w-20 .label-text {
+            display: none;
+        }
+
+        .sidebar.w-20 .nav-item {
+            justify-content: center;
+            padding: 0.75rem 0.5rem;
+            gap: 0;
+        }
+
+        .sidebar.w-20 .nav-item i {
+            margin: 0 auto;
+            width: 1.5rem;
+            text-align: center;
+        }
+
+        .sidebar.w-20 .nav-item.active {
+            border-left: 3px solid white;
+            padding-left: calc(0.5rem - 3px);
+        }
+
+        .sidebar.w-20 {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .sidebar.w-20 #sidebar-nav {
+            gap: 0.5rem;
+        }
+
+        .sidebar.w-20 > div:last-child {
+            left: 0.75rem;
+            right: 0.75rem;
+            width: auto;
+        }
+
+        /* Handle Tailwind md:w-20 class for collapsed sidebar */
+        .sidebar.md\:w-20 .label-text {
+            display: none !important;
+        }
+
+        .sidebar.md\:w-20 .nav-item {
+            justify-content: center;
+            padding: 0.75rem 0.5rem;
+            gap: 0;
+        }
+
+        .sidebar.md\:w-20 .nav-item i {
+            margin: 0 auto;
+            width: 1.5rem;
+            text-align: center;
+        }
+
+        .sidebar.md\:w-20 .nav-item.active {
+            border-left: 3px solid white;
+            padding-left: calc(0.5rem - 3px);
+        }
+
+        .sidebar.md\:w-20 {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .sidebar.md\:w-20 #sidebar-nav {
+            gap: 0.5rem;
+        }
+
+        .sidebar.md\:w-20 > div:last-child {
+            left: 0.75rem;
+            right: 0.75rem;
+            width: auto;
+        }
+
+        .sidebar.md\:w-20 button[onclick="logout()"] {
+            padding: 0.75rem 0.5rem;
+            gap: 0;
+        }
+
+        .sidebar.md\:w-20 button[onclick="logout()"] i {
+            margin: 0 auto;
+        }
+
+        .sidebar-overlay {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .sidebar-mobile {
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+
+        .old-tabs {
+            display: none;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 50%;
+            border-top-color: #6366f1;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 16px;
+            background: #333;
+            color: white;
+            border-radius: 6px;
+            font-size: 13px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Logout button in collapsed sidebar */
+        .sidebar.w-20 button[onclick="logout()"] {
+            padding: 0.75rem 0.5rem;
+            gap: 0;
+        }
+
+        .sidebar.w-20 button[onclick="logout()"] i {
+            margin: 0 auto;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .bg-white {
+                background-color: #2d2d2d;
+            }
+            .text-gray-900 {
+                color: #f5f5f5;
+            }
+            .text-gray-600 {
+                color: #b0b0b0;
+            }
+            .border-gray-200 {
+                border-color: #444;
+            }
+            .bg-gray-50 {
+                background-color: #3a3a3a;
+            }
+            .bg-gray-100 {
+                background-color: #404040;
+            }
+        }
+    </style>
+</head>
+<body class="bg-blue-50 dark:bg-gray-900">
+    <!-- Login Screen Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 dark:from-indigo-900 dark:to-purple-900 flex items-center justify-center z-50 min-h-screen">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 md:p-12 max-w-md w-full mx-4">
+            <!-- Logo/Icon -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 mb-4">
+                    <i class="fas fa-lock text-white text-2xl"></i>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Portal Rekapitulasi</h1>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mt-2">TWA GS - Sistem Manajemen Transaksi</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-2">Username</label>
+                    <div class="relative">
+                        <input
+                            type="text"
+                            id="usernameInput"
+                            placeholder="Masukkan username"
+                            class="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 transition-colors"
+                            required
+                        >
+                        <i class="fas fa-user absolute right-4 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 min-h-[44px] flex items-center justify-center gap-2"
+                >
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Login</span>
+                </button>
+            </form>
+
+
+            <!-- Footer -->
+            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center text-xs text-gray-500 dark:text-gray-400">
+                <p>Portal Rekapitulasi TWA GS v1.0</p>
+                <p class="mt-2">Built with <i class="fas fa-heart text-red-500"></i> by firesky</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="appContainer" class="hidden">
+    <div class="flex min-h-screen">
+        <!-- Mobile Hamburger Button -->
+        <button id="hamburger-btn" onclick="toggleMobileSidebar()" class="md:hidden fixed top-4 left-4 z-40 p-2 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+            <i id="hamburger-icon" class="fas fa-bars text-lg"></i>
+        </button>
+
+        <!-- Mobile Sidebar Overlay -->
+        <div id="sidebar-overlay" class="hidden fixed inset-0 bg-black/50 md:hidden z-20 sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar w-full md:w-64 text-white p-4 fixed md:relative h-screen overflow-y-auto transition-all duration-300 -translate-x-full md:translate-x-0 z-30 sidebar-mobile">
+            <div class="flex items-center justify-between mb-8">
+                <div id="sidebar-brand" class="opacity-100 transition-opacity">
+                    <h2 class="text-sm md:text-base font-bold leading-tight">Rekapitulasi PNBP TWA GS</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleSidebar()" class="hidden md:block p-2 hover:bg-white/20 rounded-lg transition-colors">
+                        <i id="toggle-icon" class="fas fa-chevron-left"></i>
+                    </button>
+                    <button onclick="toggleMobileSidebar()" class="md:hidden p-2 hover:bg-white/20 rounded-lg transition-colors">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+            </div>
+            <nav id="sidebar-nav" class="space-y-2"></nav>
+
+            <!-- Logout Button -->
+            <div class="absolute bottom-4 left-4 right-4 md:static">
+                <button onclick="logout()" class="w-full px-3 py-3 md:py-2 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 min-h-[44px]">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="label-text">Logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="main-content" class="flex-1 w-full md:ml-64 transition-all duration-300">
+            <!-- Page Content -->
+            <div class="p-4 md:p-8 min-h-screen">
+                <div id="app"></div>
+
+                <!-- Footer -->
+                <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-500 dark:text-gray-400">
+                    <p>Portal Rekapitulasi TWA GS • Built with <i class="fas fa-heart text-red-500"></i> by firesky</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // ============================================
+        // GAS CONFIGURATION
+        // ============================================
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzvAR_lozQrDAe8ar1exJKXFrzp84fnXAW-fwge9O0zPzs_auWNQqItPLZH7VpYj7wzHw/exec';
+
+        // Indonesian Public Holidays 2026
+        const publicHolidays2026 = [
+            '2026-01-01', '2026-02-17', '2026-03-11', '2026-04-10', '2026-05-01',
+            '2026-05-14', '2026-05-15', '2026-07-30', '2026-07-31', '2026-08-17',
+            '2026-09-16', '2026-10-02', '2026-12-25', '2026-12-26'
+        ];
+
+        // ============================================
+        // DUMMY DATA - 4 Minggu September 2026
+        // ============================================
+        const dummyTransaksi = [
+            { id: 1, tanggal: '2026-09-01', loket: 1, nusantara: 45, asing: 12, nusantaraCash: 22, nusantaraQris: 18, nusantaraVa: 5, asingCash: 8, asingQris: 3, asingVa: 1 },
+            { id: 2, tanggal: '2026-09-02', loket: 2, nusantara: 38, asing: 15, nusantaraCash: 20, nusantaraQris: 12, nusantaraVa: 6, asingCash: 10, asingQris: 4, asingVa: 1 },
+            { id: 3, tanggal: '2026-09-03', loket: 1, nusantara: 52, asing: 18, nusantaraCash: 28, nusantaraQris: 16, nusantaraVa: 8, asingCash: 11, asingQris: 5, asingVa: 2 },
+            { id: 4, tanggal: '2026-09-04', loket: 2, nusantara: 41, asing: 14, nusantaraCash: 21, nusantaraQris: 15, nusantaraVa: 5, asingCash: 9, asingQris: 4, asingVa: 1 },
+            { id: 5, tanggal: '2026-09-05', loket: 1, nusantara: 48, asing: 16, nusantaraCash: 25, nusantaraQris: 17, nusantaraVa: 6, asingCash: 10, asingQris: 5, asingVa: 1 },
+            { id: 6, tanggal: '2026-09-06', loket: 2, nusantara: 55, asing: 20, nusantaraCash: 30, nusantaraQris: 18, nusantaraVa: 7, asingCash: 13, asingQris: 6, asingVa: 1 },
+            { id: 7, tanggal: '2026-09-07', loket: 1, nusantara: 50, asing: 17, nusantaraCash: 26, nusantaraQris: 16, nusantaraVa: 8, asingCash: 11, asingQris: 5, asingVa: 1 },
+            { id: 8, tanggal: '2026-09-08', loket: 2, nusantara: 44, asing: 13, nusantaraCash: 23, nusantaraQris: 15, nusantaraVa: 6, asingCash: 8, asingQris: 4, asingVa: 1 },
+            { id: 9, tanggal: '2026-09-09', loket: 1, nusantara: 58, asing: 22, nusantaraCash: 32, nusantaraQris: 19, nusantaraVa: 7, asingCash: 14, asingQris: 7, asingVa: 1 },
+            { id: 10, tanggal: '2026-09-10', loket: 2, nusantara: 42, asing: 15, nusantaraCash: 22, nusantaraQris: 14, nusantaraVa: 6, asingCash: 10, asingQris: 4, asingVa: 1 },
+            { id: 11, tanggal: '2026-09-11', loket: 1, nusantara: 51, asing: 19, nusantaraCash: 27, nusantaraQris: 17, nusantaraVa: 7, asingCash: 12, asingQris: 6, asingVa: 1 },
+            { id: 12, tanggal: '2026-09-12', loket: 2, nusantara: 47, asing: 16, nusantaraCash: 25, nusantaraQris: 15, nusantaraVa: 7, asingCash: 10, asingQris: 5, asingVa: 1 },
+            { id: 13, tanggal: '2026-09-13', loket: 1, nusantara: 53, asing: 21, nusantaraCash: 28, nusantaraQris: 18, nusantaraVa: 7, asingCash: 13, asingQris: 7, asingVa: 1 },
+            { id: 14, tanggal: '2026-09-14', loket: 2, nusantara: 46, asing: 17, nusantaraCash: 24, nusantaraQris: 16, nusantaraVa: 6, asingCash: 11, asingQris: 5, asingVa: 1 },
+            { id: 15, tanggal: '2026-09-15', loket: 1, nusantara: 49, asing: 18, nusantaraCash: 26, nusantaraQris: 17, nusantaraVa: 6, asingCash: 11, asingQris: 6, asingVa: 1 },
+            { id: 16, tanggal: '2026-09-16', loket: 2, nusantara: 40, asing: 14, nusantaraCash: 21, nusantaraQris: 14, nusantaraVa: 5, asingCash: 9, asingQris: 4, asingVa: 1 },
+            { id: 17, tanggal: '2026-09-17', loket: 1, nusantara: 56, asing: 20, nusantaraCash: 30, nusantaraQris: 19, nusantaraVa: 7, asingCash: 13, asingQris: 6, asingVa: 1 },
+            { id: 18, tanggal: '2026-09-18', loket: 2, nusantara: 43, asing: 16, nusantaraCash: 22, nusantaraQris: 15, nusantaraVa: 6, asingCash: 10, asingQris: 5, asingVa: 1 },
+            { id: 19, tanggal: '2026-09-19', loket: 1, nusantara: 54, asing: 19, nusantaraCash: 29, nusantaraQris: 18, nusantaraVa: 7, asingCash: 12, asingQris: 6, asingVa: 1 },
+            { id: 20, tanggal: '2026-09-20', loket: 2, nusantara: 48, asing: 17, nusantaraCash: 25, nusantaraQris: 16, nusantaraVa: 7, asingCash: 11, asingQris: 5, asingVa: 1 },
+            { id: 21, tanggal: '2026-09-21', loket: 1, nusantara: 52, asing: 21, nusantaraCash: 28, nusantaraQris: 17, nusantaraVa: 7, asingCash: 13, asingQris: 7, asingVa: 1 },
+            { id: 22, tanggal: '2026-09-22', loket: 2, nusantara: 45, asing: 15, nusantaraCash: 24, nusantaraQris: 15, nusantaraVa: 6, asingCash: 10, asingQris: 4, asingVa: 1 },
+            { id: 23, tanggal: '2026-09-23', loket: 1, nusantara: 50, asing: 18, nusantaraCash: 26, nusantaraQris: 17, nusantaraVa: 7, asingCash: 11, asingQris: 6, asingVa: 1 },
+            { id: 24, tanggal: '2026-09-24', loket: 2, nusantara: 57, asing: 22, nusantaraCash: 31, nusantaraQris: 19, nusantaraVa: 7, asingCash: 14, asingQris: 7, asingVa: 1 },
+            { id: 25, tanggal: '2026-09-25', loket: 1, nusantara: 41, asing: 14, nusantaraCash: 21, nusantaraQris: 14, nusantaraVa: 6, asingCash: 9, asingQris: 4, asingVa: 1 },
+            { id: 26, tanggal: '2026-09-26', loket: 2, nusantara: 49, asing: 17, nusantaraCash: 26, nusantaraQris: 16, nusantaraVa: 7, asingCash: 11, asingQris: 5, asingVa: 1 },
+            { id: 27, tanggal: '2026-09-27', loket: 1, nusantara: 44, asing: 16, nusantaraCash: 23, nusantaraQris: 15, nusantaraVa: 6, asingCash: 10, asingQris: 5, asingVa: 1 },
+            { id: 28, tanggal: '2026-09-28', loket: 2, nusantara: 51, asing: 19, nusantaraCash: 27, nusantaraQris: 17, nusantaraVa: 7, asingCash: 12, asingQris: 6, asingVa: 1 },
+            { id: 29, tanggal: '2026-09-29', loket: 1, nusantara: 46, asing: 17, nusantaraCash: 24, nusantaraQris: 16, nusantaraVa: 6, asingCash: 11, asingQris: 5, asingVa: 1 },
+            { id: 30, tanggal: '2026-09-30', loket: 2, nusantara: 55, asing: 20, nusantaraCash: 29, nusantaraQris: 18, nusantaraVa: 8, asingCash: 13, asingQris: 6, asingVa: 1 }
+        ];
+
+        // Data store - Ready for GAS integration
+        const store = {
+            transaksiHarian: [...dummyTransaksi],
+            splitTransfer: [],
+            customHolidays: [
+                { bulan: 7, tanggal: 30, nama: 'Hari Lebaran (Idul Fitri)' },
+                { bulan: 7, tanggal: 31, nama: 'Hari Lebaran (Idul Fitri)' },
+                { bulan: 9, tanggal: 16, nama: 'Hari Raya Haji' }
+            ],
+            selectedRekapBulan: '2026-09',
+            currentTab: 'dashboard'
+        };
+
+        const tarif = {
+            nusantaraKerja: { harga: 27000, pnbp: 10000, ptdid: 15000, asuransi: 2000 },
+            nusantaraLibur: { harga: 29500, pnbp: 15000, ptdid: 12500, asuransi: 2000 },
+            asingKerja: { harga: 125000, pnbp: 100000, ptdid: 23000, asuransi: 2000 },
+            asingLibur: { harga: 125000, pnbp: 100000, ptdid: 23000, asuransi: 2000 }
+        };
+
+        // ============================================
+        // GAS API FUNCTIONS
+        // ============================================
+        async function fetchFromGAS(action) {
+            try {
+                const url = `${GAS_URL}?action=${action}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.error) {
+                    console.error(`GAS Error (${action}):`, data.error);
+                    return [];
+                }
+                return data;
+            } catch (error) {
+                console.error(`Fetch Error (${action}):`, error);
+                return [];
+            }
+        }
+
+        async function postToGAS(action, data) {
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    redirect: 'follow'
+                });
+                const result = await response.json();
+                return result.success === true;
+            } catch (error) {
+                console.error(`POST Error (${action}):`, error);
+                return false;
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION - Load Data from GAS
+        // ============================================
+        async function initializeData() {
+            try {
+                const [transaksiData, holidaysData] = await Promise.all([
+                    fetchFromGAS('getTransaksiHarian'),
+                    fetchFromGAS('getCustomHolidays')
+                ]);
+                
+                store.transaksiHarian = transaksiData.map(row => ({
+                    id: row.id || '',
+                    tanggal: row.tanggal || '',
+                    loket: parseInt(row.loket) || 0,
+                    nusantara: parseInt(row.nusantara) || 0,
+                    asing: parseInt(row.asing) || 0,
+                    nusantaraCash: parseInt(row.nusantaraCash) || 0,
+                    nusantaraQris: parseInt(row.nusantaraQris) || 0,
+                    nusantaraVa: parseInt(row.nusantaraVa) || 0,
+                    asingCash: parseInt(row.asingCash) || 0,
+                    asingQris: parseInt(row.asingQris) || 0,
+                    asingVa: parseInt(row.asingVa) || 0
+                }));
+                
+                store.customHolidays = holidaysData.map(row => ({
+                    bulan: parseInt(row.bulan) || 0,
+                    tanggal: parseInt(row.tanggal) || 0,
+                    nama: row.nama || ''
+                }));
+
+                // Add default holidays if not loaded from GAS
+                if (store.customHolidays.length === 0) {
+                    store.customHolidays = [
+                        { bulan: 7, tanggal: 30, nama: 'Hari Lebaran (Idul Fitri)' },
+                        { bulan: 7, tanggal: 31, nama: 'Hari Lebaran (Idul Fitri)' },
+                        { bulan: 9, tanggal: 16, nama: 'Hari Raya Haji' }
+                    ];
+                }
+                
+                render();
+            } catch (error) {
+                console.error('Initialization Error:', error);
+                render();
+            }
+        }
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function isHolidayOrWeekend(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            const dayOfWeek = date.getDay();
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            const isPublicHoliday = publicHolidays2026.includes(dateStr);
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const isCustomHoliday = store.customHolidays.some(h => h.bulan === month && h.tanggal === day);
+            return isWeekend || isPublicHoliday || isCustomHoliday;
+        }
+
+        function getDayName(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleString('id-ID', { weekday: 'long' });
+        }
+
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
+        }
+
+        function formatNominal(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '');
+        }
+
+        function getTarifForDate(tanggal) {
+            const isHoliday = isHolidayOrWeekend(tanggal);
+            return {
+                nusantara: isHoliday ? tarif.nusantaraLibur : tarif.nusantaraKerja,
+                asing: isHoliday ? tarif.asingLibur : tarif.asingKerja,
+                isHoliday: isHoliday,
+                type: isHoliday ? 'LIBUR' : 'KERJA'
+            };
+        }
+
+        function calculateRevenue(trans) {
+            const tarifData = getTarifForDate(trans.tanggal);
+            return (trans.nusantara * tarifData.nusantara.harga) + (trans.asing * tarifData.asing.harga);
+        }
+
+        function calculateVisitors(trans) {
+            return trans.nusantara + trans.asing;
+        }
+
+        // Dashboard View
+        function renderDashboard() {
+            const totalPengunjung = store.transaksiHarian.reduce((sum, t) => sum + calculateVisitors(t), 0);
+            const totalPendapatan = store.transaksiHarian.reduce((sum, t) => sum + calculateRevenue(t), 0);
+
+            const byLoket = {};
+            store.transaksiHarian.forEach(t => {
+                if (!byLoket[t.loket]) byLoket[t.loket] = { pengunjung: 0, pendapatan: 0 };
+                byLoket[t.loket].pengunjung += calculateVisitors(t);
+                byLoket[t.loket].pendapatan += calculateRevenue(t);
+            });
+
+            return `
+                <div class="mb-6 md:mb-8">
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">Dashboard</h1>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm md:text-base">Selamat datang di Portal Rekapitulasi TWA GS</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg card-shadow p-4 md:p-6">
+                        <p class="text-gray-600 dark:text-gray-400 text-xs md:text-sm font-medium">Total Pengunjung</p>
+                        <p class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mt-2">${totalPengunjung}</p>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg card-shadow p-4 md:p-6">
+                        <p class="text-gray-600 dark:text-gray-400 text-xs md:text-sm font-medium">Total Pendapatan</p>
+                        <p class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mt-2">${formatCurrency(totalPendapatan)}</p>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg card-shadow p-4 md:p-6">
+                        <p class="text-gray-600 dark:text-gray-400 text-xs md:text-sm font-medium">Transaksi Tercatat</p>
+                        <p class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mt-2">${store.transaksiHarian.length}</p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-lg card-shadow p-4 md:p-6">
+                    <h2 class="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">Rekapitulasi per Loket</h2>
+                    <div class="overflow-x-auto -mx-4 md:mx-0">
+                        <table class="w-full text-xs md:text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-200 dark:border-gray-700">
+                                    <th class="px-4 py-2 md:py-3 text-left font-semibold text-gray-900 dark:text-white">Loket</th>
+                                    <th class="px-4 py-2 md:py-3 text-right font-semibold text-gray-900 dark:text-white">Pengunjung</th>
+                                    <th class="px-4 py-2 md:py-3 text-right font-semibold text-gray-900 dark:text-white">Pendapatan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Object.entries(byLoket).map(([loket, data]) => `
+                                    <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <td class="px-4 py-2 md:py-3 font-medium text-gray-900 dark:text-white">Loket ${loket}</td>
+                                        <td class="px-4 py-2 md:py-3 text-right text-gray-600 dark:text-gray-400">${data.pengunjung}</td>
+                                        <td class="px-4 py-2 md:py-3 text-right font-semibold text-gray-900 dark:text-white">${formatCurrency(data.pendapatan)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Input Harian View
+        function renderInputHarian() {
+            return `
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6 mb-6">
+                    <h3 class="text-lg md:text-xl font-semibold mb-4 text-gray-900 dark:text-white">Input Transaksi Harian</h3>
+                    <form id="formTransaksi" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal *</label>
+                                <input type="date" id="inputTanggal" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" required onchange="updateTarifInfo()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Loket *</label>
+                                <select id="inputLoket" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]">
+                                    <option value="1">Loket 1</option>
+                                    <option value="2">Loket 2</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="tarifDisplay" class="p-3 md:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Pilih tanggal terlebih dahulu untuk melihat tarif yang berlaku</span>
+                        </div>
+
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-4">Tiket Terjual</h4>
+                            <div class="space-y-4">
+                                <!-- NUSANTARA -->
+                                <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+                                        <div class="font-semibold text-green-700 dark:text-green-400">NUSANTARA (Domestik)</div>
+                                        <div class="text-sm text-gray-600 dark:text-gray-400">Total: <span id="nusantaraTotalDisplay" class="font-bold text-green-700 dark:text-green-400">0</span> lembar</div>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <div>
+                                            <label class="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cash</label>
+                                            <input type="number" id="nusantaraCash" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" value="0" min="0" onchange="updateTotalDisplay()">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">📱 QRIS</label>
+                                            <input type="number" id="nusantaraQris" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" value="0" min="0" onchange="updateTotalDisplay()">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">🏦 VA</label>
+                                            <input type="number" id="nusantaraVa" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" value="0" min="0" onchange="updateTotalDisplay()">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- ASING -->
+                                <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+                                        <div class="font-semibold text-purple-700 dark:text-purple-400">ASING (Mancanegara)</div>
+                                        <div class="text-sm text-gray-600 dark:text-gray-400">Total: <span id="asingTotalDisplay" class="font-bold text-purple-700 dark:text-purple-400">0</span> lembar</div>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <div>
+                                            <label class="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cash</label>
+                                            <input type="number" id="asingCash" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" value="0" min="0" onchange="updateTotalDisplay()">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">📱 QRIS</label>
+                                            <input type="number" id="asingQris" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" value="0" min="0" onchange="updateTotalDisplay()">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">🏦 VA</label>
+                                            <input type="number" id="asingVa" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" value="0" min="0" onchange="updateTotalDisplay()">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-primary hover:bg-indigo-700 text-white py-3 md:py-4 rounded-lg font-semibold text-base md:text-lg transition-colors min-h-[44px] md:min-h-[48px]">
+                            💾 Simpan Transaksi
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6">
+                    <h3 class="text-lg md:text-xl font-semibold mb-4 text-gray-900 dark:text-white">Data Transaksi Harian</h3>
+                    <div class="overflow-x-auto -mx-4 md:mx-0">
+                        <table class="w-full text-xs md:text-sm">
+                            <thead class="bg-gray-100 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-4 py-2 md:py-3 text-left font-semibold text-gray-900 dark:text-white">Tanggal</th>
+                                    <th class="px-4 py-2 md:py-3 text-left font-semibold text-gray-900 dark:text-white">Hari</th>
+                                    <th class="px-4 py-2 md:py-3 text-left font-semibold text-gray-900 dark:text-white">Loket</th>
+                                    <th class="px-4 py-2 md:py-3 text-right font-semibold text-gray-900 dark:text-white">Pengunjung</th>
+                                    <th class="px-4 py-2 md:py-3 text-right font-semibold text-gray-900 dark:text-white">Pendapatan</th>
+                                    <th class="px-4 py-2 md:py-3 text-center font-semibold text-gray-900 dark:text-white">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${store.transaksiHarian.map((t, idx) => {
+                                    const tarifData = getTarifForDate(t.tanggal);
+                                    const pengunjung = calculateVisitors(t);
+                                    const pendapatan = calculateRevenue(t);
+                                    return `
+                                        <tr class="border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                            <td class="px-4 py-2 md:py-3 font-medium text-gray-900 dark:text-white">${t.tanggal}</td>
+                                            <td class="px-4 py-2 md:py-3"><span class="px-2 py-1 rounded text-xs font-semibold ${tarifData.isHoliday ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300' : 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'}">${tarifData.type}</span></td>
+                                            <td class="px-4 py-2 md:py-3 text-gray-900 dark:text-white">L${t.loket}</td>
+                                            <td class="px-4 py-2 md:py-3 text-right text-gray-600 dark:text-gray-400">${pengunjung}</td>
+                                            <td class="px-4 py-2 md:py-3 text-right font-semibold text-gray-900 dark:text-white text-xs md:text-sm">${formatCurrency(pendapatan)}</td>
+                                            <td class="px-4 py-2 md:py-3 text-center space-x-1">
+                                                <button onclick="editTransaksi(${idx})" class="px-2 md:px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded transition-colors min-h-[32px]">✏️</button>
+                                                <button onclick="deleteTransaksi(${idx})" class="px-2 md:px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded transition-colors min-h-[32px]">🗑️</button>
+                                            </td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Rekap Tunai View - FULL VERSION (same as original)
+        function renderRekapTunai() {
+            function getRekapData(weekType) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const dayOfWeek = today.getDay();
+                let startDate, endDate, periodName;
+
+                if (weekType === 'monday') {
+                    startDate = new Date(today);
+                    startDate.setDate(startDate.getDate() - (dayOfWeek + 3) % 7);
+                    if (dayOfWeek <= 1) startDate.setDate(startDate.getDate() - 7);
+                    startDate.setDate(startDate.getDate() - 4);
+                    endDate = new Date(startDate);
+                    endDate.setDate(endDate.getDate() + 3);
+                    periodName = 'Kamis s/d Minggu';
+                } else {
+                    startDate = new Date(today);
+                    startDate.setDate(startDate.getDate() - (dayOfWeek + 3) % 7);
+                    if (dayOfWeek <= 4) startDate.setDate(startDate.getDate());
+                    endDate = new Date(startDate);
+                    endDate.setDate(endDate.getDate() + 2);
+                    periodName = 'Senin s/d Rabu';
+                }
+
+                const data = store.transaksiHarian.filter(t => {
+                    const tDate = new Date(t.tanggal + 'T00:00:00');
+                    return tDate >= startDate && tDate <= endDate;
+                });
+
+                const startStr = startDate.toISOString().split('T')[0];
+                const endStr = endDate.toISOString().split('T')[0];
+
+                const byLoket = {};
+                data.forEach(t => {
+                    if (!byLoket[t.loket]) {
+                        byLoket[t.loket] = { pengunjung: 0, pendapatan: 0, totalCash: 0, detail: [] };
+                    }
+                    const visitors = calculateVisitors(t);
+                    const revenue = calculateRevenue(t);
+                    const cashAmount = t.nusantaraCash + t.asingCash;
+                    const cashRevenue = (t.nusantaraCash * getTarifForDate(t.tanggal).nusantara.harga) +
+                                       (t.asingCash * getTarifForDate(t.tanggal).asing.harga);
+
+                    byLoket[t.loket].pengunjung += visitors;
+                    byLoket[t.loket].pendapatan += revenue;
+                    byLoket[t.loket].totalCash += cashRevenue;
+                    byLoket[t.loket].detail.push({
+                        tanggal: t.tanggal,
+                        pengunjung: visitors,
+                        revenue: revenue,
+                        cashAmount: cashAmount,
+                        cashRevenue: cashRevenue
+                    });
+                });
+
+                return { byLoket, startStr, endStr, periodName, data };
+            }
+
+            const mondayRecap = getRekapData('monday');
+            const thursdayRecap = getRekapData('thursday');
+
+            function renderRekapTableWeekly(recap, title, type) {
+                if (recap.data.length === 0) {
+                    return `<p class="text-gray-400 text-sm italic">Tidak ada data untuk ${title}</p>`;
+                }
+
+                let html = `
+                    <div class="mb-4">
+                        <h5 class="font-semibold text-sm mb-2 text-gray-900 dark:text-white">${title}</h5>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">Periode: ${recap.startStr} s/d ${recap.endStr} (${recap.periodName})</p>
+                        <div class="overflow-x-auto -mx-4 md:mx-0">
+                            <table class="w-full text-xs border border-gray-200 dark:border-gray-700">
+                                <thead class="bg-gray-100 dark:bg-gray-700">
+                                    <tr>
+                                        <th class="px-2 md:px-3 py-1 md:py-2 text-left border-b border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">Loket</th>
+                                        <th class="px-2 md:px-3 py-1 md:py-2 text-right border-b border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">Pengunjung</th>
+                                        <th class="px-2 md:px-3 py-1 md:py-2 text-right border-b border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">Pendapatan</th>
+                                        <th class="px-2 md:px-3 py-1 md:py-2 text-right border-b border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">Cash</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
+
+                let grandTotalVisitors = 0, grandTotalRevenue = 0, grandTotalCash = 0;
+                Object.entries(recap.byLoket).sort().forEach(([loket, info]) => {
+                    grandTotalVisitors += info.pengunjung;
+                    grandTotalRevenue += info.pendapatan;
+                    grandTotalCash += info.totalCash;
+
+                    html += `
+                        <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <td class="px-2 md:px-3 py-1 md:py-2 font-semibold text-gray-900 dark:text-white">L${loket}</td>
+                            <td class="px-2 md:px-3 py-1 md:py-2 text-right text-gray-600 dark:text-gray-400">${info.pengunjung}</td>
+                            <td class="px-2 md:px-3 py-1 md:py-2 text-right font-semibold text-sm text-gray-900 dark:text-white">${formatCurrency(info.pendapatan)}</td>
+                            <td class="px-2 md:px-3 py-1 md:py-2 text-right font-semibold text-green-600 dark:text-green-400 text-sm">${formatCurrency(info.totalCash)}</td>
+                        </tr>`;
+                });
+
+                html += `
+                                    <tr class="bg-gray-100 dark:bg-gray-700 font-semibold text-xs text-gray-900 dark:text-white">
+                                        <td class="px-2 md:px-3 py-1 md:py-2">TOTAL</td>
+                                        <td class="px-2 md:px-3 py-1 md:py-2 text-right">${grandTotalVisitors}</td>
+                                        <td class="px-2 md:px-3 py-1 md:py-2 text-right">${formatCurrency(grandTotalRevenue)}</td>
+                                        <td class="px-2 md:px-3 py-1 md:py-2 text-right text-green-600 dark:text-green-400">${formatCurrency(grandTotalCash)}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>`;
+
+                return html;
+            }
+
+            const allMonths = new Set();
+            store.transaksiHarian.forEach(t => {
+                const monthYear = t.tanggal.substring(0, 7);
+                allMonths.add(monthYear);
+            });
+            const sortedMonths = Array.from(allMonths).sort().reverse();
+            const selectedMonth = store.selectedRekapBulan || sortedMonths[0] || '2026-09';
+
+            const monthNames = {
+                '2026-01': 'Januari 2026', '2026-02': 'Februari 2026', '2026-03': 'Maret 2026',
+                '2026-04': 'April 2026', '2026-05': 'Mei 2026', '2026-06': 'Juni 2026',
+                '2026-07': 'Juli 2026', '2026-08': 'Agustus 2026', '2026-09': 'September 2026',
+                '2026-10': 'Oktober 2026', '2026-11': 'November 2026', '2026-12': 'Desember 2026'
+            };
+
+            const allDates = new Set();
+            store.transaksiHarian.forEach(t => {
+                if (t.tanggal.startsWith(selectedMonth)) {
+                    allDates.add(t.tanggal);
+                }
+            });
+            const sortedDates = Array.from(allDates).sort();
+
+            const mondaysAndThursdays = [];
+            sortedDates.forEach(dateStr => {
+                const date = new Date(dateStr + 'T00:00:00');
+                const dayOfWeek = date.getDay();
+                if (dayOfWeek === 1 || dayOfWeek === 4) {
+                    mondaysAndThursdays.push({
+                        date: dateStr,
+                        dayOfWeek: dayOfWeek,
+                        type: dayOfWeek === 1 ? 'monday' : 'thursday'
+                    });
+                }
+            });
+
+            const weeks = [];
+            let currentWeek = null;
+            mondaysAndThursdays.forEach(item => {
+                if (item.type === 'monday') {
+                    if (currentWeek) weeks.push(currentWeek);
+                    currentWeek = { monday: item, thursday: null };
+                } else {
+                    if (!currentWeek) currentWeek = { monday: null, thursday: null };
+                    currentWeek.thursday = item;
+                }
+            });
+            if (currentWeek) weeks.push(currentWeek);
+
+            let weeksHtml = '';
+            weeks.forEach((week, weekIdx) => {
+                const weekNum = weekIdx + 1;
+                weeksHtml += `
+                    <div class="mb-6 p-3 md:p-4 border-l-4 border-blue-500 rounded-lg bg-blue-50 dark:bg-blue-900/20 dark:border-blue-700">
+                        <h4 class="font-bold text-base md:text-lg mb-4 text-blue-900 dark:text-blue-300">📆 MINGGU KE-${weekNum}</h4>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">`;
+
+                if (week.monday) {
+                    const mondayDate = new Date(week.monday.date + 'T00:00:00');
+                    let startDate = new Date(mondayDate);
+                    startDate.setDate(startDate.getDate() - 4);
+                    let endDate = new Date(mondayDate);
+                    endDate.setDate(endDate.getDate() + 2);
+
+                    const recapForThisMonday = {
+                        byLoket: {},
+                        startStr: startDate.toISOString().split('T')[0],
+                        endStr: endDate.toISOString().split('T')[0],
+                        periodName: 'Kamis s/d Minggu',
+                        data: []
+                    };
+
+                    const data = store.transaksiHarian.filter(t => {
+                        const tDate = new Date(t.tanggal + 'T00:00:00');
+                        return tDate >= startDate && tDate <= endDate;
+                    });
+                    recapForThisMonday.data = data;
+
+                    data.forEach(t => {
+                        if (!recapForThisMonday.byLoket[t.loket]) {
+                            recapForThisMonday.byLoket[t.loket] = { pengunjung: 0, pendapatan: 0, totalCash: 0 };
+                        }
+                        const visitors = calculateVisitors(t);
+                        const revenue = calculateRevenue(t);
+                        const cashRevenue = (t.nusantaraCash * getTarifForDate(t.tanggal).nusantara.harga) +
+                                           (t.asingCash * getTarifForDate(t.tanggal).asing.harga);
+                        recapForThisMonday.byLoket[t.loket].pengunjung += visitors;
+                        recapForThisMonday.byLoket[t.loket].pendapatan += revenue;
+                        recapForThisMonday.byLoket[t.loket].totalCash += cashRevenue;
+                    });
+
+                    let mondayTotalVisitors = 0, mondayTotalRevenue = 0;
+                    Object.values(recapForThisMonday.byLoket).forEach(info => {
+                        mondayTotalVisitors += info.pengunjung;
+                        mondayTotalRevenue += info.pendapatan;
+                    });
+
+                    weeksHtml += `<div class="p-3 md:p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700">
+                        ${renderRekapTableWeekly(recapForThisMonday, `📅 SENIN (${week.monday.date})`, 'monday')}
+                        <button onclick="sendToWhatsApp('SENIN', '${week.monday.date}', '${recapForThisMonday.startStr} s/d ${recapForThisMonday.endStr}', ${mondayTotalVisitors}, '${formatCurrency(mondayTotalRevenue)}')" class="w-full mt-3 bg-green-600 hover:bg-green-700 text-white py-2 md:py-3 rounded font-semibold text-sm md:text-base transition-colors min-h-[44px]">
+                            💬 Kirim ke WhatsApp
+                        </button>
+                    </div>`;
+                }
+
+                if (week.thursday) {
+                    const thursdayDate = new Date(week.thursday.date + 'T00:00:00');
+                    let startDate = new Date(thursdayDate);
+                    startDate.setDate(startDate.getDate() - 3);
+                    let endDate = new Date(thursdayDate);
+
+                    const recapForThisThursday = {
+                        byLoket: {},
+                        startStr: startDate.toISOString().split('T')[0],
+                        endStr: endDate.toISOString().split('T')[0],
+                        periodName: 'Senin s/d Rabu',
+                        data: []
+                    };
+
+                    const data = store.transaksiHarian.filter(t => {
+                        const tDate = new Date(t.tanggal + 'T00:00:00');
+                        return tDate >= startDate && tDate <= endDate;
+                    });
+                    recapForThisThursday.data = data;
+
+                    data.forEach(t => {
+                        if (!recapForThisThursday.byLoket[t.loket]) {
+                            recapForThisThursday.byLoket[t.loket] = { pengunjung: 0, pendapatan: 0, totalCash: 0 };
+                        }
+                        const visitors = calculateVisitors(t);
+                        const revenue = calculateRevenue(t);
+                        const cashRevenue = (t.nusantaraCash * getTarifForDate(t.tanggal).nusantara.harga) +
+                                           (t.asingCash * getTarifForDate(t.tanggal).asing.harga);
+                        recapForThisThursday.byLoket[t.loket].pengunjung += visitors;
+                        recapForThisThursday.byLoket[t.loket].pendapatan += revenue;
+                        recapForThisThursday.byLoket[t.loket].totalCash += cashRevenue;
+                    });
+
+                    let thursdayTotalVisitors = 0, thursdayTotalRevenue = 0;
+                    Object.values(recapForThisThursday.byLoket).forEach(info => {
+                        thursdayTotalVisitors += info.pengunjung;
+                        thursdayTotalRevenue += info.pendapatan;
+                    });
+
+                    weeksHtml += `<div class="p-3 md:p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700">
+                        ${renderRekapTableWeekly(recapForThisThursday, `📅 KAMIS (${week.thursday.date})`, 'thursday')}
+                        <button onclick="sendToWhatsApp('KAMIS', '${week.thursday.date}', '${recapForThisThursday.startStr} s/d ${recapForThisThursday.endStr}', ${thursdayTotalVisitors}, '${formatCurrency(thursdayTotalRevenue)}')" class="w-full mt-3 bg-purple-600 hover:bg-purple-700 text-white py-2 md:py-3 rounded font-semibold text-sm md:text-base transition-colors min-h-[44px]">
+                            💬 Kirim ke WhatsApp
+                        </button>
+                    </div>`;
+                }
+
+                weeksHtml += `</div></div>`;
+            });
+
+            return `
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6">
+                    <div class="mb-6">
+                        <h3 class="text-lg md:text-xl font-semibold mb-4 text-gray-900 dark:text-white">Rekapitulasi Tunai Per Minggu</h3>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Pilih Bulan:</label>
+                            <select id="rekapBulanSelect" class="px-3 md:px-4 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" onchange="switchRekapBulan(this.value)">
+                                ${sortedMonths.map(month => `
+                                    <option value="${month}" ${month === selectedMonth ? 'selected' : ''}>${monthNames[month]}</option>
+                                `).join('')}
+                            </select>
+                        </div>
+                        <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400 p-3 md:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                            📌 Rekap dipecah per minggu berdasarkan tanggal Senin dan Kamis (data tidak terduplikasi antar minggu).
+                            <br>Senin = data Kamis-Minggu minggu lalu | Kamis = data Senin-Rabu minggu ini
+                        </p>
+                    </div>
+                    ${weeksHtml || '<p class="text-gray-500 dark:text-gray-400 text-sm">Tidak ada data transaksi untuk periode ini</p>'}
+                </div>
+            `;
+        }
+
+        function switchRekapBulan(month) {
+            store.currentTab = 'rekaptunai';
+            store.selectedRekapBulan = month;
+            render();
+        }
+
+        function sendToWhatsApp(dayName, dateStr, periodStr, totalVisitors, totalRevenue) {
+            const message = `Catatan Rekap ${dayName}\n\nTanggal: ${dateStr}\nPeriode: ${periodStr}\nTotal Pengunjung: ${totalVisitors} orang\nTotal Pendapatan: ${totalRevenue}\n\nDikrim dari Portal Rekapitulasi TWA GS`;
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/6285725554849?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Split Transfer View (FULL VERSION - sama seperti original)
+        function renderSplitTransfer() {
+            const allMonths = new Set();
+            store.transaksiHarian.forEach(t => {
+                const monthYear = t.tanggal.substring(0, 7);
+                allMonths.add(monthYear);
+            });
+            const sortedMonths = Array.from(allMonths).sort().reverse();
+            const selectedMonth = store.selectedRekapBulan || sortedMonths[0] || '2026-09';
+
+            const monthNames = {
+                '2026-01': 'Januari 2026', '2026-02': 'Februari 2026', '2026-03': 'Maret 2026',
+                '2026-04': 'April 2026', '2026-05': 'Mei 2026', '2026-06': 'Juni 2026',
+                '2026-07': 'Juli 2026', '2026-08': 'Agustus 2026', '2026-09': 'September 2026',
+                '2026-10': 'Oktober 2026', '2026-11': 'November 2026', '2026-12': 'Desember 2026'
+            };
+
+            const allDates = new Set();
+            store.transaksiHarian.forEach(t => {
+                if (t.tanggal.startsWith(selectedMonth)) {
+                    allDates.add(t.tanggal);
+                }
+            });
+            const sortedDates = Array.from(allDates).sort();
+
+            const mondaysAndThursdays = [];
+            sortedDates.forEach(dateStr => {
+                const date = new Date(dateStr + 'T00:00:00');
+                const dayOfWeek = date.getDay();
+                if (dayOfWeek === 1 || dayOfWeek === 4) {
+                    mondaysAndThursdays.push({
+                        date: dateStr,
+                        dayOfWeek: dayOfWeek,
+                        type: dayOfWeek === 1 ? 'monday' : 'thursday'
+                    });
+                }
+            });
+
+            function calculateSplitForDate(dateStr, type) {
+                let startDate, endDate;
+                if (type === 'monday') {
+                    startDate = new Date(dateStr + 'T00:00:00');
+                    startDate.setDate(startDate.getDate() - 4);
+                    endDate = new Date(dateStr + 'T00:00:00');
+                    endDate.setDate(endDate.getDate() + 2);
+                } else {
+                    startDate = new Date(dateStr + 'T00:00:00');
+                    startDate.setDate(startDate.getDate() - 3);
+                    endDate = new Date(dateStr + 'T00:00:00');
+                }
+
+                const monthNamesArray = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                const startDay = startDate.getDate().toString().padStart(2, '0');
+                const endDay = endDate.getDate().toString().padStart(2, '0');
+                const startMonth = monthNamesArray[startDate.getMonth()];
+                const endMonth = monthNamesArray[endDate.getMonth()];
+
+                let asuransiDesc = '';
+                if (startDate.getMonth() !== endDate.getMonth()) {
+                    asuransiDesc = `TWAGS-ASURANSI-${startDay} ${startMonth}-${endDay} ${endMonth}`;
+                } else {
+                    asuransiDesc = `TWAGS-ASURANSI-${startDay}-${endDay} ${endMonth}`;
+                }
+
+                const data = store.transaksiHarian.filter(t => {
+                    const tDate = new Date(t.tanggal + 'T00:00:00');
+                    return tDate >= startDate && tDate <= endDate;
+                });
+
+                let countPnbpWNIKerja = 0, countPnbpWNILibur = 0;
+                let countPnbpWNAKerja = 0, countPnbpWNALibur = 0;
+                let countPtdidWNIKerja = 0, countPtdidWNILibur = 0;
+                let countPtdidWNAKerja = 0, countPtdidWNALibur = 0;
+                let countAsuransiWNIKerja = 0, countAsuransiWNILibur = 0;
+                let countAsuransiWNAKerja = 0, countAsuransiWNALibur = 0;
+
+                let pnbpWNIKerja = 0, pnbpWNILibur = 0;
+                let pnbpWNAKerja = 0, pnbpWNALibur = 0;
+                let ptdidWNIKerja = 0, ptdidWNILibur = 0;
+                let ptdidWNAKerja = 0, ptdidWNALibur = 0;
+                let asuransiWNIKerja = 0, asuransiWNILibur = 0;
+                let asuransiWNAKerja = 0, asuransiWNALibur = 0;
+
+                let totalRevenue = 0;
+                let tarifPnbpKerja = 0, tarifPnbpLibur = 0;
+                let tarifPtdidKerja = 0, tarifPtdidLibur = 0;
+
+                data.forEach(t => {
+                    const tarifData = getTarifForDate(t.tanggal);
+                    const isHoliday = tarifData.isHoliday;
+
+                    if (isHoliday) {
+                        countPnbpWNILibur += t.nusantara;
+                        countPnbpWNALibur += t.asing;
+                        tarifPnbpLibur = tarifData.nusantara.pnbp;
+                        pnbpWNILibur += t.nusantara * tarifData.nusantara.pnbp;
+                        pnbpWNALibur += t.asing * tarifData.asing.pnbp;
+
+                        countPtdidWNILibur += t.nusantara;
+                        countPtdidWNALibur += t.asing;
+                        tarifPtdidLibur = tarifData.nusantara.ptdid;
+                        ptdidWNILibur += t.nusantara * tarifData.nusantara.ptdid;
+                        ptdidWNALibur += t.asing * tarifData.asing.ptdid;
+
+                        countAsuransiWNILibur += t.nusantara;
+                        countAsuransiWNALibur += t.asing;
+                        asuransiWNILibur += t.nusantara * 2000;
+                        asuransiWNALibur += t.asing * 2000;
+                    } else {
+                        countPnbpWNIKerja += t.nusantara;
+                        countPnbpWNAKerja += t.asing;
+                        tarifPnbpKerja = tarifData.nusantara.pnbp;
+                        pnbpWNIKerja += t.nusantara * tarifData.nusantara.pnbp;
+                        pnbpWNAKerja += t.asing * tarifData.asing.pnbp;
+
+                        countPtdidWNIKerja += t.nusantara;
+                        countPtdidWNAKerja += t.asing;
+                        tarifPtdidKerja = tarifData.nusantara.ptdid;
+                        ptdidWNIKerja += t.nusantara * tarifData.nusantara.ptdid;
+                        ptdidWNAKerja += t.asing * tarifData.asing.ptdid;
+
+                        countAsuransiWNIKerja += t.nusantara;
+                        countAsuransiWNAKerja += t.asing;
+                        asuransiWNIKerja += t.nusantara * 2000;
+                        asuransiWNAKerja += t.asing * 2000;
+                    }
+
+                    totalRevenue += calculateRevenue(t);
+                });
+
+                const totalPNBP = pnbpWNIKerja + pnbpWNILibur + pnbpWNAKerja + pnbpWNALibur;
+                const totalPTDID = ptdidWNIKerja + ptdidWNILibur + ptdidWNAKerja + ptdidWNALibur;
+                const totalAsuransi = asuransiWNIKerja + asuransiWNILibur + asuransiWNAKerja + asuransiWNALibur;
+                const totalAsuransiVisitors = countAsuransiWNIKerja + countAsuransiWNILibur + countAsuransiWNAKerja + countAsuransiWNALibur;
+
+                return {
+                    pnbpWNIKerja, pnbpWNILibur, pnbpWNAKerja, pnbpWNALibur, totalPNBP,
+                    ptdidWNIKerja, ptdidWNILibur, ptdidWNAKerja, ptdidWNALibur, totalPTDID,
+                    asuransiWNIKerja, asuransiWNILibur, asuransiWNAKerja, asuransiWNALibur, totalAsuransi,
+                    countPnbpWNIKerja, countPnbpWNILibur, countPnbpWNAKerja, countPnbpWNALibur,
+                    countPtdidWNIKerja, countPtdidWNILibur, countPtdidWNAKerja, countPtdidWNALibur,
+                    countAsuransiWNIKerja, countAsuransiWNILibur, countAsuransiWNAKerja, countAsuransiWNALibur,
+                    tarifPnbpKerja, tarifPnbpLibur, tarifPtdidKerja, tarifPtdidLibur,
+                    asuransiDesc, totalAsuransiVisitors, totalRevenue,
+                    visitorsCount: data.length
+                };
+            }
+
+            let splitHtml = '';
+            mondaysAndThursdays.forEach((item) => {
+                const split = calculateSplitForDate(item.date, item.type);
+                const totalNominal = split.totalPNBP + split.totalPTDID + split.totalAsuransi;
+
+                if (split.visitorsCount > 0) {
+                    const dayType = item.type === 'monday' ? '📅 SENIN' : '📅 KAMIS';
+                    const bgColor = item.type === 'monday' ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700' : 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-700';
+                    const periodType = item.type === 'monday' ? '(Kamis-Minggu)' : '(Senin-Rabu)';
+
+                    splitHtml += `
+                        <div class="p-3 md:p-4 rounded-lg border-2 ${bgColor} mb-4">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+                                <h4 class="font-bold text-base text-gray-900 dark:text-white">${dayType} ${item.date} ${periodType}</h4>
+                                <span class="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300 px-2 py-1 rounded w-fit">Belum Transfer</span>
+                            </div>
+
+                            <div class="overflow-x-auto -mx-3 md:mx-0 mb-4">
+                                <table class="w-full text-xs border border-gray-300 dark:border-gray-600">
+                                    <thead class="bg-gray-100 dark:bg-gray-700">
+                                        <tr>
+                                            <th class="px-2 py-2 text-left border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white">Alokasi</th>
+                                            <th class="px-2 py-2 text-right border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-xs">WNI K</th>
+                                            <th class="px-2 py-2 text-right border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-xs">WNI L</th>
+                                            <th class="px-2 py-2 text-right border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-xs">WNA K</th>
+                                            <th class="px-2 py-2 text-right border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-xs">WNA L</th>
+                                            <th class="px-2 py-2 text-right border-b border-gray-300 dark:border-gray-600 font-bold bg-yellow-50 dark:bg-yellow-900/30 text-gray-900 dark:text-white">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-gray-300 dark:border-gray-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20">
+                                            <td class="px-2 py-2 font-semibold text-gray-900 dark:text-white">PNBP</td>
+                                            <td class="px-2 py-2 text-right text-xs text-gray-900 dark:text-white">
+                                                <div class="font-semibold">${formatNominal(split.pnbpWNIKerja)}</div>
+                                            </td>
+                                            <td class="px-2 py-2 text-right text-xs text-gray-900 dark:text-white">
+                                                <div class="font-semibold">${formatNominal(split.pnbpWNILibur)}</div>
+                                            </td>
+                                            <td class="px-2 py-2 text-right text-xs text-gray-900 dark:text-white">
+                                                <div class="font-semibold">${formatNominal(split.pnbpWNAKerja)}</div>
+                                            </td>
+                                            <td class="px-2 py-2 text-right text-xs text-gray-900 dark:text-white">
+                                                <div class="font-semibold">${formatNominal(split.pnbpWNALibur)}</div>
+                                            </td>
+                                            <td class="px-2 py-2 text-right font-bold bg-yellow-100 dark:bg-yellow-900/50 text-gray-900 dark:text-white">${formatNominal(split.totalPNBP)}</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-300 dark:border-gray-600 hover:bg-purple-50 dark:hover:bg-purple-900/20">
+                                            <td class="px-2 py-2 font-semibold text-gray-900 dark:text-white">PT DID</td>
+                                            <td class="px-2 py-2 text-right text-xs text-gray-900 dark:text-white">
+                                                <div class="font-semibold">${formatNominal(split.ptdidWNIKerja)}</div>
+                                            </td>
+                                            <td class="px-2 py-2 text-right text-xs text-gray-900 dark:text-white">
+                                                <div class="font-semibold">${formatNominal(split.ptdidWNILibur)}</div>
+                                            </td>
+                                            <td class="px-2 py-2 text-right text-xs text-gray-900 dark:text-white">
+                                                <div class="font-semibold">${formatNominal(split.ptdidWNAKerja)}</div>
+                                            </td>
+                                            <td class="px-2 py-2 text-right text-xs text-gray-900 dark:text-white">
+                                                <div class="font-semibold">${formatNominal(split.ptdidWNALibur)}</div>
+                                            </td>
+                                            <td class="px-2 py-2 text-right font-bold bg-purple-100 dark:bg-purple-900/50 text-gray-900 dark:text-white">${formatNominal(split.totalPTDID)}</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-300 dark:border-gray-600 hover:bg-red-50 dark:hover:bg-red-900/20">
+                                            <td class="px-2 py-2 font-semibold text-gray-900 dark:text-white">Asuransi</td>
+                                            <td colspan="4" class="px-2 py-2 text-right text-xs text-gray-900 dark:text-white">
+                                                <div class="font-semibold">${formatNominal(split.totalAsuransi)}</div>
+                                            </td>
+                                            <td class="px-2 py-2 text-right font-bold bg-red-100 dark:bg-red-900/50 text-gray-900 dark:text-white">${formatNominal(split.totalAsuransi)}</td>
+                                        </tr>
+                                        <tr class="bg-gray-100 dark:bg-gray-700 font-bold text-gray-900 dark:text-white">
+                                            <td class="px-2 py-2">TOTAL</td>
+                                            <td colspan="5" class="px-2 py-2 text-right text-sm md:text-lg">${formatNominal(totalNominal)}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>`;
+                }
+            });
+
+            return `
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6 mb-6">
+                    <div class="mb-6">
+                        <h3 class="text-lg md:text-xl font-semibold mb-4 text-gray-900 dark:text-white">Split Transfer Per Recap Senin & Kamis</h3>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Pilih Bulan:</label>
+                            <select id="splitBulanSelect" class="px-3 md:px-4 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" onchange="switchSplitBulan(this.value)">
+                                ${sortedMonths.map(month => `
+                                    <option value="${month}" ${month === selectedMonth ? 'selected' : ''}>${monthNames[month]}</option>
+                                `).join('')}
+                            </select>
+                        </div>
+                        <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400 p-3 md:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                            📌 Setiap Senin dan Kamis akan ada satu kartu Split Transfer berdasarkan rekap pada hari tersebut.
+                            Nilai alokasi dihitung dari data yang sudah di-recap di menu Rekap Tunai.
+                        </p>
+                    </div>
+
+                    ${splitHtml || '<p class="text-gray-500 dark:text-gray-400 text-sm">Tidak ada data untuk bulan ini</p>'}
+                </div>
+            `;
+        }
+
+        function switchSplitBulan(month) {
+            store.currentTab = 'split';
+            store.selectedRekapBulan = month;
+            render();
+        }
+
+        // Laporan Bulanan View
+        function renderLaporanBulanan() {
+            const bulanIni = new Date().toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+            const pnbpLoket1 = store.transaksiHarian.filter(t => t.loket === 1).reduce((sum, t) => {
+                const tarifData = getTarifForDate(t.tanggal);
+                return sum + (t.nusantara * tarifData.nusantara.pnbp + t.asing * tarifData.asing.pnbp);
+            }, 0);
+            const pnbpLoket2 = store.transaksiHarian.filter(t => t.loket === 2).reduce((sum, t) => {
+                const tarifData = getTarifForDate(t.tanggal);
+                return sum + (t.nusantara * tarifData.nusantara.pnbp + t.asing * tarifData.asing.pnbp);
+            }, 0);
+            const totalPNBP = pnbpLoket1 + pnbpLoket2;
+
+            return `
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6">
+                        <h3 class="text-lg md:text-xl font-semibold mb-4 text-gray-900 dark:text-white">Rekapitulasi Bulanan ${bulanIni}</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between pb-2 border-b border-gray-200 dark:border-gray-700">
+                                <span class="text-gray-600 dark:text-gray-400 text-sm md:text-base">Total Pengunjung</span>
+                                <span class="font-semibold text-gray-900 dark:text-white text-sm md:text-lg">${store.transaksiHarian.reduce((sum, t) => sum + calculateVisitors(t), 0)} orang</span>
+                            </div>
+                            <div class="flex justify-between pb-2 border-b border-gray-200 dark:border-gray-700">
+                                <span class="text-gray-600 dark:text-gray-400 text-sm md:text-base">Total Pendapatan</span>
+                                <span class="font-semibold text-gray-900 dark:text-white text-sm md:text-lg">${formatCurrency(store.transaksiHarian.reduce((sum, t) => sum + calculateRevenue(t), 0))}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400 text-sm md:text-base">Transaksi Tercatat</span>
+                                <span class="font-semibold text-gray-900 dark:text-white text-sm md:text-lg">${store.transaksiHarian.length} transaksi</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6">
+                        <h3 class="text-lg md:text-xl font-semibold mb-4 text-gray-900 dark:text-white">Laporan Rekon PNBP per Loket</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between pb-2 border-b border-gray-200 dark:border-gray-700">
+                                <span class="text-gray-600 dark:text-gray-400 text-sm md:text-base">Loket 1</span>
+                                <span class="font-semibold text-gray-900 dark:text-white text-sm md:text-lg">${formatCurrency(pnbpLoket1)}</span>
+                            </div>
+                            <div class="flex justify-between pb-2 border-b border-gray-200 dark:border-gray-700">
+                                <span class="text-gray-600 dark:text-gray-400 text-sm md:text-base">Loket 2</span>
+                                <span class="font-semibold text-gray-900 dark:text-white text-sm md:text-lg">${formatCurrency(pnbpLoket2)}</span>
+                            </div>
+                            <div class="flex justify-between pt-2 bg-yellow-50 dark:bg-yellow-900/30 px-3 py-2 rounded font-semibold text-gray-900 dark:text-white">
+                                <span class="text-sm md:text-base">Total PNBP Masuk</span>
+                                <span class="text-yellow-600 dark:text-yellow-400 text-sm md:text-lg">${formatCurrency(totalPNBP)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6">
+                        <h3 class="text-lg md:text-xl font-semibold mb-4 text-gray-900 dark:text-white">Berita Acara Bonggol Terjual</h3>
+                        <form id="formBA" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Loket</label>
+                                    <select id="baLoket" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]">
+                                        <option value="1">Loket 1</option>
+                                        <option value="2">Loket 2</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bulan/Tahun</label>
+                                    <input type="month" id="baBulan" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" required>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nomor Seri Awal</label>
+                                    <input type="number" id="baAwal" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" placeholder="1001" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nomor Seri Akhir</label>
+                                    <input type="number" id="baAkhir" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" placeholder="5000" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-primary hover:bg-indigo-700 text-white py-3 md:py-4 rounded-lg font-semibold text-base md:text-lg transition-colors min-h-[44px] md:min-h-[48px]">
+                                💾 Simpan Berita Acara
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6">
+                        <h3 class="text-lg md:text-xl font-semibold mb-4 text-gray-900 dark:text-white">📦 Berita Acara Stok Opname Karcis</h3>
+                        <form id="formOpname" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Loket</label>
+                                    <select id="opnameLoket" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]">
+                                        <option value="1">Loket 1</option>
+                                        <option value="2">Loket 2</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal Opname</label>
+                                    <input type="date" id="opnameTanggal" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" required>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Stok Awal (Lembar)</label>
+                                    <input type="number" id="opnameAwal" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" placeholder="5000" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Stok Akhir (Lembar)</label>
+                                    <input type="number" id="opnameAkhir" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" placeholder="4500" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-primary hover:bg-indigo-700 text-white py-3 md:py-4 rounded-lg font-semibold text-base md:text-lg transition-colors min-h-[44px] md:min-h-[48px]">
+                                💾 Simpan Opname Stok
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Settings View
+        function renderSettings() {
+            return `
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6 mb-6">
+                    <h3 class="text-lg md:text-xl font-semibold mb-4 text-gray-900 dark:text-white">Pengaturan Hari Libur Custom</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Tambahkan tanggal libur custom yang disimpan ke Google Sheet. Hari Sabtu dan Minggu sudah otomatis dihitung sebagai libur.</p>
+
+                    <form id="formAddHoliday" class="p-3 md:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700 mb-6">
+                        <h4 class="font-semibold mb-3 text-gray-900 dark:text-white">Tambah Hari Libur Baru</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bulan *</label>
+                                <select id="holidayMonth" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]">
+                                    <option value="">-- Pilih Bulan --</option>
+                                    <option value="1">Januari</option>
+                                    <option value="2">Februari</option>
+                                    <option value="3">Maret</option>
+                                    <option value="4">April</option>
+                                    <option value="5">Mei</option>
+                                    <option value="6">Juni</option>
+                                    <option value="7">Juli</option>
+                                    <option value="8">Agustus</option>
+                                    <option value="9">September</option>
+                                    <option value="10">Oktober</option>
+                                    <option value="11">November</option>
+                                    <option value="12">Desember</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal *</label>
+                                <input type="number" id="holidayDate" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" min="1" max="31" placeholder="1-31" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nama Hari Libur *</label>
+                                <input type="text" id="holidayName" class="w-full px-3 py-2 md:py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-[44px]" placeholder="Contoh: Hari Raya Haji" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="mt-3 w-full bg-primary hover:bg-indigo-700 text-white py-2 md:py-3 rounded-lg font-semibold text-sm md:text-base transition-colors min-h-[44px]">
+                            ➕ Tambah Hari Libur
+                        </button>
+                    </form>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6">
+                    <h3 class="text-lg md:text-xl font-semibold mb-4 text-gray-900 dark:text-white">📅 Daftar Hari Libur Custom (${store.customHolidays.length})</h3>
+                    <div class="overflow-x-auto -mx-4 md:mx-0">
+                        <table class="w-full text-xs md:text-sm">
+                            <thead class="bg-gray-100 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-4 py-2 md:py-3 text-left font-semibold text-gray-900 dark:text-white">Bulan</th>
+                                    <th class="px-4 py-2 md:py-3 text-left font-semibold text-gray-900 dark:text-white">Tanggal</th>
+                                    <th class="px-4 py-2 md:py-3 text-left font-semibold text-gray-900 dark:text-white">Nama Hari Libur</th>
+                                    <th class="px-4 py-2 md:py-3 text-center font-semibold text-gray-900 dark:text-white">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${store.customHolidays.map((h, idx) => {
+                                    const bulanNames = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                                    return `
+                                        <tr class="border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                            <td class="px-4 py-2 md:py-3 text-gray-900 dark:text-white">${bulanNames[h.bulan]}</td>
+                                            <td class="px-4 py-2 md:py-3 text-gray-900 dark:text-white">${h.tanggal}</td>
+                                            <td class="px-4 py-2 md:py-3 text-gray-900 dark:text-white">${h.nama}</td>
+                                            <td class="px-4 py-2 md:py-3 text-center">
+                                                <button onclick="deleteHoliday(${idx})" class="px-2 md:px-3 py-1 md:py-2 bg-danger hover:bg-red-600 text-white rounded text-xs font-semibold transition-colors min-h-[32px] md:min-h-[36px]">
+                                                    🗑️
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    ${store.customHolidays.length === 0 ? '<p class="text-gray-500 dark:text-gray-400 text-sm mt-3">Belum ada hari libur custom</p>' : ''}
+                </div>
+            `;
+        }
+
+        // Main render function
+        function render() {
+            renderSidebar();
+            const app = document.getElementById('app');
+            let content = '';
+
+            switch(store.currentTab) {
+                case 'dashboard':
+                    content = renderDashboard();
+                    break;
+                case 'input':
+                    content = renderInputHarian();
+                    break;
+                case 'rekaptunai':
+                    content = renderRekapTunai();
+                    break;
+                case 'split':
+                    content = renderSplitTransfer();
+                    break;
+                case 'laporan':
+                    content = renderLaporanBulanan();
+                    break;
+                case 'settings':
+                    content = renderSettings();
+                    break;
+            }
+
+            app.innerHTML = content;
+            attachEventListeners();
+        }
+
+        let sidebarCollapsed = false;
+        let mobileMenuOpen = false;
+
+        function toggleSidebar() {
+            sidebarCollapsed = !sidebarCollapsed;
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const brand = document.getElementById('sidebar-brand');
+            const toggleIcon = document.getElementById('toggle-icon');
+
+            if (sidebarCollapsed) {
+                sidebar.classList.remove('md:w-64');
+                sidebar.classList.add('md:w-20');
+                mainContent.classList.remove('md:ml-64');
+                mainContent.classList.add('md:ml-20');
+                brand.classList.add('hidden');
+                toggleIcon.classList.remove('fa-chevron-left');
+                toggleIcon.classList.add('fa-chevron-right');
+            } else {
+                sidebar.classList.add('md:w-64');
+                sidebar.classList.remove('md:w-20');
+                mainContent.classList.add('md:ml-64');
+                mainContent.classList.remove('md:ml-20');
+                brand.classList.remove('hidden');
+                toggleIcon.classList.add('fa-chevron-left');
+                toggleIcon.classList.remove('fa-chevron-right');
+            }
+        }
+
+        function toggleMobileSidebar() {
+            mobileMenuOpen = !mobileMenuOpen;
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const hamburgerIcon = document.getElementById('hamburger-icon');
+
+            if (mobileMenuOpen) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                overlay.classList.remove('hidden');
+                hamburgerIcon.classList.remove('fa-bars');
+                hamburgerIcon.classList.add('fa-times');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.remove('translate-x-0');
+                overlay.classList.add('hidden');
+                hamburgerIcon.classList.add('fa-bars');
+                hamburgerIcon.classList.remove('fa-times');
+            }
+        }
+
+        // Close mobile sidebar when a nav item is clicked
+        window.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+
+            if (mobileMenuOpen && !sidebar.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+                toggleMobileSidebar();
+            }
+        });
+
+        function renderSidebar() {
+            const tabs = [
+                { id: 'dashboard', icon: 'fa-home', label: 'Dashboard' },
+                { id: 'input', icon: 'fa-pen', label: 'Input Harian' },
+                { id: 'rekaptunai', icon: 'fa-list', label: 'Rekap Tunai' },
+                { id: 'split', icon: 'fa-share', label: 'Split Transfer' },
+                { id: 'laporan', icon: 'fa-chart-line', label: 'Laporan Bulanan' },
+                { id: 'settings', icon: 'fa-gear', label: 'Pengaturan' }
+            ];
+
+            const sidebarNav = document.getElementById('sidebar-nav');
+            sidebarNav.innerHTML = tabs.map(tab => `
+                <button onclick="store.currentTab='${tab.id}'; render()" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white ${store.currentTab === tab.id ? 'active' : ''}" title="${tab.label}">
+                    <i class="fas ${tab.icon} w-5 flex-shrink-0"></i>
+                    <span class="label-text">${tab.label}</span>
+                </button>
+            `).join('');
+        }
+
+        function updateTarifInfo() {
+            const inputTanggal = document.getElementById('inputTanggal');
+            const tarifDisplay = document.getElementById('tarifDisplay');
+
+            if (!inputTanggal.value) {
+                tarifDisplay.innerHTML = '<span class="text-gray-600">Pilih tanggal terlebih dahulu</span>';
+                return;
+            }
+
+            const tarifData = getTarifForDate(inputTanggal.value);
+            const hari = getDayName(inputTanggal.value);
+            const jenisTarif = tarifData.isHoliday ? '<span class="font-bold text-red-600">HARI LIBUR</span>' : '<span class="font-bold text-green-600">HARI KERJA</span>';
+
+            tarifDisplay.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div><strong>${hari}</strong> - ${jenisTarif}</div>
+                    <div class="space-y-1 text-xs">
+                        <div>Nusantara: <strong>${formatCurrency(tarifData.nusantara.harga)}</strong></div>
+                        <div>Asing: <strong>${formatCurrency(tarifData.asing.harga)}</strong></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateTotalDisplay() {
+            const nusantaraCash = parseInt(document.getElementById('nusantaraCash').value) || 0;
+            const nusantaraQris = parseInt(document.getElementById('nusantaraQris').value) || 0;
+            const nusantaraVa = parseInt(document.getElementById('nusantaraVa').value) || 0;
+            const asingCash = parseInt(document.getElementById('asingCash').value) || 0;
+            const asingQris = parseInt(document.getElementById('asingQris').value) || 0;
+            const asingVa = parseInt(document.getElementById('asingVa').value) || 0;
+
+            const nusantaraTotal = nusantaraCash + nusantaraQris + nusantaraVa;
+            const asingTotal = asingCash + asingQris + asingVa;
+
+            document.getElementById('nusantaraTotalDisplay').textContent = nusantaraTotal;
+            document.getElementById('asingTotalDisplay').textContent = asingTotal;
+        }
+
+        function attachEventListeners() {
+            const formTransaksi = document.getElementById('formTransaksi');
+            if (formTransaksi) {
+                formTransaksi.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const tanggal = document.getElementById('inputTanggal').value;
+                    const loket = parseInt(document.getElementById('inputLoket').value);
+                    const nusantaraCash = parseInt(document.getElementById('nusantaraCash').value) || 0;
+                    const nusantaraQris = parseInt(document.getElementById('nusantaraQris').value) || 0;
+                    const nusantaraVa = parseInt(document.getElementById('nusantaraVa').value) || 0;
+                    const asingCash = parseInt(document.getElementById('asingCash').value) || 0;
+                    const asingQris = parseInt(document.getElementById('asingQris').value) || 0;
+                    const asingVa = parseInt(document.getElementById('asingVa').value) || 0;
+
+                    const nusantara = nusantaraCash + nusantaraQris + nusantaraVa;
+                    const asing = asingCash + asingQris + asingVa;
+
+                    if (nusantara + asing === 0) {
+                        showToast('⚠️ Minimal ada 1 tiket yang terjual!');
+                        return;
+                    }
+
+                    const trans = {
+                        id: store.transaksiHarian.length + 1,
+                        tanggal, loket, nusantara, asing,
+                        nusantaraCash, nusantaraQris, nusantaraVa,
+                        asingCash, asingQris, asingVa
+                    };
+
+                    // Simpan ke local store DULU
+                    store.transaksiHarian.push(trans);
+                    showToast('✅ Transaksi tersimpan (local)!');
+                    formTransaksi.reset();
+                    document.getElementById('tarifDisplay').innerHTML = '<span class="text-gray-600">Pilih tanggal terlebih dahulu</span>';
+                    document.getElementById('nusantaraTotalDisplay').textContent = '0';
+                    document.getElementById('asingTotalDisplay').textContent = '0';
+                    render();
+
+                    // POST ke GAS (opsional, untuk sync)
+                    const gasSuccess = await postToGAS('addTransaksi', trans);
+                    if (gasSuccess) {
+                        showToast('☁️ Sinkronisasi GAS berhasil!');
+                    }
+                });
+            }
+
+            const formBA = document.getElementById('formBA');
+            if (formBA) {
+                formBA.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    showToast('✅ Berita Acara tersimpan!');
+                    formBA.reset();
+                });
+            }
+
+            const formOpname = document.getElementById('formOpname');
+            if (formOpname) {
+                formOpname.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    showToast('✅ Opname stok tersimpan!');
+                    formOpname.reset();
+                });
+            }
+
+            const formAddHoliday = document.getElementById('formAddHoliday');
+            if (formAddHoliday) {
+                formAddHoliday.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const bulan = parseInt(document.getElementById('holidayMonth').value);
+                    const tanggal = parseInt(document.getElementById('holidayDate').value);
+                    const nama = document.getElementById('holidayName').value;
+
+                    if (!bulan || !tanggal || !nama) {
+                        showToast('⚠️ Semua field harus diisi!');
+                        return;
+                    }
+
+                    if (tanggal < 1 || tanggal > 31) {
+                        showToast('⚠️ Tanggal harus antara 1-31!');
+                        return;
+                    }
+
+                    const exists = store.customHolidays.some(h => h.bulan === bulan && h.tanggal === tanggal);
+                    if (exists) {
+                        showToast('⚠️ Hari libur sudah ada!');
+                        return;
+                    }
+
+                    const success = await postToGAS('addCustomHoliday', { bulan, tanggal, nama });
+
+                    if (success) {
+                        store.customHolidays.push({ bulan, tanggal, nama });
+                        showToast(`✅ Hari libur "${nama}" ditambahkan!`);
+                        formAddHoliday.reset();
+                        render();
+                    } else {
+                        showToast('❌ Gagal menambahkan hari libur!');
+                    }
+                });
+            }
+        }
+
+        function editTransaksi(index) {
+            const t = store.transaksiHarian[index];
+            const newNusantara = prompt('Jumlah Nusantara:', t.nusantara);
+            if (newNusantara === null) return;
+
+            const newAsing = prompt('Jumlah Asing:', t.asing);
+            if (newAsing === null) return;
+
+            const newLoket = prompt('Loket (1/2):', t.loket);
+            if (newLoket === null) return;
+
+            store.transaksiHarian[index] = {
+                ...t,
+                nusantara: parseInt(newNusantara),
+                asing: parseInt(newAsing),
+                loket: parseInt(newLoket)
+            };
+
+            showToast('✅ Transaksi diperbarui!');
+            render();
+        }
+
+        function deleteTransaksi(index) {
+            const t = store.transaksiHarian[index];
+            if (confirm(`Hapus transaksi ${t.tanggal} - Loket ${t.loket}?`)) {
+                store.transaksiHarian.splice(index, 1);
+                showToast('✅ Transaksi dihapus!');
+                render();
+            }
+        }
+
+        function deleteHoliday(index) {
+            const h = store.customHolidays[index];
+            if (confirm(`Hapus hari libur "${h.nama}"?`)) {
+                store.customHolidays.splice(index, 1);
+                showToast('✅ Hari libur dihapus!');
+                render();
+            }
+        }
+
+        // ============================================
+        // LOGIN FUNCTIONS
+        // ============================================
+        const VALID_USERNAME = 'firesky';
+
+        function checkLoginStatus() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            const loginModal = document.getElementById('loginModal');
+            const appContainer = document.getElementById('appContainer');
+
+            if (isLoggedIn === 'true') {
+                loginModal.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                return true;
+            } else {
+                loginModal.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+                return false;
+            }
+        }
+
+        function handleLoginSubmit(event) {
+            event.preventDefault();
+            const usernameInput = document.getElementById('usernameInput');
+            const username = usernameInput.value.trim();
+
+            if (!username) {
+                showToast('❌ Username tidak boleh kosong!');
+                return;
+            }
+
+            if (username !== VALID_USERNAME) {
+                showToast('❌ Username salah!');
+                usernameInput.value = '';
+                usernameInput.focus();
+                return;
+            }
+
+            // Login berhasil
+            sessionStorage.setItem('isLoggedIn', 'true');
+            sessionStorage.setItem('username', username);
+            showToast(`✅ Selamat datang, ${username}!`);
+
+            setTimeout(() => {
+                document.getElementById('loginForm').reset();
+                checkLoginStatus();
+                initializeData();
+            }, 500);
+        }
+
+        function logout() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('username');
+                showToast('✅ Anda telah keluar!');
+
+                setTimeout(() => {
+                    checkLoginStatus();
+                    document.getElementById('usernameInput').focus();
+                }, 500);
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
+        });
+    </script>
+</body>
+</html>
