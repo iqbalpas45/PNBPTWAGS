@@ -1,0 +1,183 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║         PORTAL REKAPITULASI TWA GS - QUICK REFERENCE CARD v1.0            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+📱 AKSES APLIKASI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌐 Online:         https://pnbptwags.vercel.app/app.html
+🌐 Custom Domain:  https://firesky.my.id/app.html
+💻 Lokal:          file:///D:/Portal-TWA-GS/app.html
+
+
+🔐 LOGIN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Username:  firesky
+Password:  (no password needed)
+
+
+📋 6 MENU UTAMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. 🏠 DASHBOARD          → Ringkasan total pengunjung & pendapatan
+2. ✏️  INPUT HARIAN      → Catat transaksi baru tiap hari
+3. 📋 REKAP TUNAI       → Rekapitulasi mingguan (Senin-Rabu, Kamis-Minggu)
+4. 🔄 SPLIT TRANSFER    → Perhitungan split pendapatan ke rekening
+5. 📊 LAPORAN BULANAN   → Laporan lengkap end-of-month
+6. ⚙️  PENGATURAN       → Edit hari libur & tarif
+
+
+⚡ WORKFLOW HARIAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGI    → Input Harian (catat penjualan loket 1 & 2)
+SIANG   → Dashboard (monitoring total & cocokkan)
+SORE    → Rekap Tunai (reconciliation mingguan)
+BULAN   → Laporan Bulanan (reporting)
+
+
+🎯 INPUT HARIAN - STEP BY STEP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Pilih TANGGAL          → Sistem auto-detect kerja/libur + tarif
+2. Pilih LOKET            → Loket 1 atau Loket 2
+3. Isi NUSANTARA (WNI)    → Cash + QRIS + VA
+4. Isi ASING (Mancanegara) → Cash + QRIS + VA
+5. Lihat TARIF INFO       → Auto-display tarif hari ini
+6. Klik SIMPAN TRANSAKSI  → Data masuk Dashboard + Cloud
+
+
+💰 KOMPONEN TARIF (DINAMIS)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NUSANTARA (WNI)
+  Hari Kerja:    Rp 27.000
+  Hari Libur:    Rp 29.500
+
+ASING (Mancanegara)
+  Hari Kerja:    Rp 125.000
+  Hari Libur:    Rp 125.000
+
+⚙️  Edit di: PENGATURAN → Edit Tarif
+
+
+📊 DASHBOARD CARDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💭 Total Pengunjung      → Jumlah orang masuk (Nusantara + Asing)
+💵 Total Pendapatan      → Total uang masuk (Rp)
+📈 Transaksi Tercatat    → Jumlah transaksi input
+
+
+📋 REKAP TUNAI - PERIODE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Periode 1:  SENIN - RABU         (3 hari)
+Periode 2:  KAMIS - MINGGU       (4 hari)
+
+Breakdown per loket & metode pembayaran (Cash, QRIS, VA)
+
+
+🔄 SPLIT TRANSFER FORMAT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TWAGS [Komponen] [HK/HL] [Tipe] [Count] ORG x [Tarif]
+
+Contoh:
+  TWAGS PNBP HK WNI 15 ORG x 10000
+  TWAGS PTDID HL WNA 5 ORG x 23000
+
+PNBP    = Penerimaan Negara Bukan Pajak
+PTDID   = (Komponen lain)
+HK/HL   = Hari Kerja / Hari Libur
+WNI/WNA = Warga Negara Indonesia / Asing
+ORG     = Organisasi/Satuan
+
+
+⚙️  PENGATURAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✏️  Edit Hari Libur
+    - Lihat daftar hari libur
+    - Tambah hari libur baru
+    - Hapus hari libur
+
+💰 Edit Tarif
+    - Update harga PNBP (WNI/WNA, Kerja/Libur)
+    - Update harga PTDID (WNI/WNA, Kerja/Libur)
+    - Update harga Asuransi (WNI/WNA, Kerja/Libur)
+
+
+🔓 LOGOUT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Buka SIDEBAR (klik hamburger ☰)
+2. Klik LOGOUT (tombol merah)
+3. Konfirmasi logout
+4. Kembali ke login form
+
+
+✅ AUTO FEATURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Deteksi hari kerja/libur → Tarif berubah otomatis
+✓ Perhitungan total tiket → Auto-sum Nusantara + Asing
+✓ Perhitungan pendapatan → Auto-multiply tiket x tarif
+✓ Split transfer breakdown → PNBP/PTDID/Asuransi otomatis
+✓ Responsive design → Mobile, tablet, desktop
+✓ Dark mode → Light & dark theme support
+✓ Cloud sync → Data tersimpan di cloud
+✓ Historical data → Lihat data bulan sebelumnya
+
+
+📱 MOBILE TIPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Sidebar auto-collapse → lebih banyak space untuk content
+- Touch-friendly buttons → min-height 44px untuk mudah diklik
+- Responsive form → Tampilannya adjust dengan ukuran layar
+- Bookmark di home screen → Akses cepat dari home
+
+
+⚠️  TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Problem         | Solution
+─────────────────────────────────────────────────────────────────────────────
+Dashboard blank | Hard refresh (Ctrl+Shift+R) atau clear cache browser
+Data tidak      | Cek koneksi internet (butuh untuk cloud sync)
+tersimpan       |
+Tarif salah     | Cek di Pengaturan → Edit Tarif, update sesuai kebijakan
+Lupa logout     | Clear browser cache atau tutup tab
+Akses offline   | Gunakan file lokal atau data cache dari browser
+Edit error      | Refresh halaman lalu try again
+
+
+📞 SUPPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Hubungi developer untuk:
+  • Issue teknis / bug report
+  • Perubahan tarif / hari libur
+  • Backup data
+  • Custom reporting
+  • Feature request
+
+
+📊 DATA EXAMPLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Sample Data: September - Oktober 2026
+  • Total transaksi: 60 records
+  • Format: Tanggal, Loket, Nusantara, Asing, Payment method
+  • Sudah include: Hari kerja & hari libur samples
+
+
+🎯 BEST PRACTICES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Input transaksi SETIAP HARI (jangan tunda)
+2. Cocokkan dengan sistem kasir loket SAME DAY
+3. Update tarif saat ada perubahan kebijakan
+4. Backup/download laporan bulanan untuk arsip
+5. Check dashboard pagi hari untuk monitoring
+6. Gunakan Rekap Tunai untuk reconciliation mingguan
+
+
+🚀 TIPS & TRICKS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💡 Bookmark aplikasi di home screen → Akses lebih cepat
+💡 Gunakan dark mode di malam hari → Mata lebih nyaman
+💡 Print laporan bulanan → Arsip fisik untuk dokumentasi
+💡 Screenshot dashboard → Share ke atasan untuk reporting
+💡 Set reminder harian → Input transaksi jangan sampai lupa
+
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║  Version: 1.0 | Build: Production Ready ✅ | Last Updated: Sep 2026       ║
+║         Built with ❤️ by firesky | Portal Rekapitulasi TWA GS             ║
+╚════════════════════════════════════════════════════════════════════════════╝
