@@ -513,36 +513,32 @@
                     fetchFromGAS('getTransaksiHarian'),
                     fetchFromGAS('getCustomHolidays')
                 ]);
-                
-                store.transaksiHarian = transaksiData.map(row => ({
-                    id: row.id || '',
-                    tanggal: row.tanggal || '',
-                    loket: parseInt(row.loket) || 0,
-                    nusantara: parseInt(row.nusantara) || 0,
-                    asing: parseInt(row.asing) || 0,
-                    nusantaraCash: parseInt(row.nusantaraCash) || 0,
-                    nusantaraQris: parseInt(row.nusantaraQris) || 0,
-                    nusantaraVa: parseInt(row.nusantaraVa) || 0,
-                    asingCash: parseInt(row.asingCash) || 0,
-                    asingQris: parseInt(row.asingQris) || 0,
-                    asingVa: parseInt(row.asingVa) || 0
-                }));
-                
-                store.customHolidays = holidaysData.map(row => ({
-                    bulan: parseInt(row.bulan) || 0,
-                    tanggal: parseInt(row.tanggal) || 0,
-                    nama: row.nama || ''
-                }));
 
-                // Add default holidays if not loaded from GAS
-                if (store.customHolidays.length === 0) {
-                    store.customHolidays = [
-                        { bulan: 7, tanggal: 30, nama: 'Hari Lebaran (Idul Fitri)' },
-                        { bulan: 7, tanggal: 31, nama: 'Hari Lebaran (Idul Fitri)' },
-                        { bulan: 9, tanggal: 16, nama: 'Hari Raya Haji' }
-                    ];
+                // Only update if data exists
+                if (transaksiData && transaksiData.length > 0) {
+                    store.transaksiHarian = transaksiData.map(row => ({
+                        id: row.id || '',
+                        tanggal: row.tanggal || '',
+                        loket: parseInt(row.loket) || 0,
+                        nusantara: parseInt(row.nusantara) || 0,
+                        asing: parseInt(row.asing) || 0,
+                        nusantaraCash: parseInt(row.nusantaraCash) || 0,
+                        nusantaraQris: parseInt(row.nusantaraQris) || 0,
+                        nusantaraVa: parseInt(row.nusantaraVa) || 0,
+                        asingCash: parseInt(row.asingCash) || 0,
+                        asingQris: parseInt(row.asingQris) || 0,
+                        asingVa: parseInt(row.asingVa) || 0
+                    }));
                 }
-                
+
+                if (holidaysData && holidaysData.length > 0) {
+                    store.customHolidays = holidaysData.map(row => ({
+                        bulan: parseInt(row.bulan) || 0,
+                        tanggal: parseInt(row.tanggal) || 0,
+                        nama: row.nama || ''
+                    }));
+                }
+
                 render();
             } catch (error) {
                 console.error('Initialization Error:', error);
